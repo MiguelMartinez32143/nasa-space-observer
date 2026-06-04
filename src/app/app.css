@@ -9,21 +9,8 @@
   background-color: #0c0d12;
 }
 
-.space-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background: #0c0d12;
-}
-
-/* CONTAINER */
 .app-container {
-  max-width: 600px;
+  max-width: 520px;
   margin: 0 auto;
   padding: 60px 20px;
   display: flex;
@@ -34,9 +21,8 @@
   justify-content: center;
 }
 
-/* HEADER */
 .dashboard-header h1 {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 400;
   margin: 0;
   letter-spacing: 1px;
@@ -45,19 +31,16 @@
   text-transform: uppercase;
 }
 
-/* CARD */
 .greeting-card {
   background: #131520;
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 12px;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 36px;
 }
 
 .greeting-card h2 {
-  font-size: 1.3rem;
-  margin-top: 0;
-  margin-bottom: 10px;
+  font-size: 1.2rem;
+  margin: 0 0 8px 0;
   color: #ffffff;
   font-weight: 500;
   text-align: center;
@@ -66,29 +49,28 @@
 .intro-text {
   color: #94a3b8;
   line-height: 1.5;
-  font-size: 0.95rem;
-  margin-bottom: 30px;
+  font-size: 0.9rem;
+  margin: 0 0 28px 0;
   text-align: center;
 }
 
-/* LOADING STATE & SPINNER */
 .loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   margin: 20px 0;
 }
 
 .loading-state p {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #94a3b8;
   margin: 0;
 }
 
 .spinner {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-top-color: #ffffff;
   border-radius: 50%;
@@ -99,26 +81,23 @@
   to { transform: rotate(360deg); }
 }
 
-/* RESULT CARD */
 .result-card {
-  background: rgba(255, 255, 255, 0.01);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  padding: 24px;
-  margin-top: 10px;
+  padding: 20px;
 }
 
 .result-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   padding-bottom: 10px;
 }
 
 .result-header h3 {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: #94a3b8;
@@ -131,43 +110,19 @@
   height: 6px;
   border-radius: 50%;
   background-color: #4ade80;
-  box-shadow: 0 0 8px #4ade80;
 }
 
 .result-details p {
   font-size: 0.9rem;
-  margin: 6px 0;
+  margin: 5px 0;
   color: #cbd5e1;
 }
 
 .label {
   color: #64748b;
-  margin-right: 6px;
+  margin-right: 4px;
 }
 
-.image-preview {
-  margin: 20px 0;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  aspect-ratio: 16 / 9;
-}
-
-.preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.console-hint {
-  font-size: 0.8rem;
-  color: #64748b;
-  text-align: center;
-  margin: 15px 0 0 0;
-  line-height: 1.4;
-}
-
-/* ERROR CARD */
 .error-card {
   background: rgba(239, 68, 68, 0.05);
   border: 1px solid rgba(239, 68, 68, 0.2);

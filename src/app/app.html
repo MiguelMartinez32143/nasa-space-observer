@@ -1,5 +1,3 @@
-<div class="space-background"></div>
-
 <div class="app-container">
   <header class="dashboard-header">
     <h1>NASA Space Observer</h1>
@@ -9,7 +7,7 @@
     <div class="greeting-card">
       <h2>Bienvenido a la base inicial</h2>
       <p class="intro-text">
-        Aplicación base Angular integrada con la interfaz de datos de la NASA.
+        Aplicación Angular integrada con la API de la NASA.
       </p>
 
       @if (loading()) {
@@ -22,27 +20,19 @@
       @if (apiResult()) {
         <div class="result-card">
           <div class="result-header">
-            <h3>Estado de Conexión: Online</h3>
+            <h3>Conexión exitosa</h3>
             <span class="status-dot"></span>
           </div>
-          
           <div class="result-details">
-            <p><span class="label">Objeto:</span> {{ apiResult()?.title }}</p>
+            <p><span class="label">Título:</span> {{ apiResult()?.title }}</p>
             <p><span class="label">Fecha:</span> {{ apiResult()?.date }}</p>
           </div>
-          
-          @if (apiResult()?.url) {
-            <div class="image-preview">
-              <img [src]="apiResult()?.url" [alt]="apiResult()?.title" class="preview-img">
-            </div>
-          }
-          <p class="console-hint">Los detalles completos del fetch se han registrado en la consola del desarrollador (F12).</p>
         </div>
       }
 
       @if (error()) {
         <div class="error-card">
-          <p>Error: {{ error() }}</p>
+          <p>{{ error() }}</p>
         </div>
       }
     </div>
