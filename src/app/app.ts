@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NasaService, ApodResponse } from './services/nasa.service';
 
@@ -8,19 +8,23 @@ import { NasaService, ApodResponse } from './services/nasa.service';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit {
   private nasaService = inject(NasaService);
 
   protected loading = signal<boolean>(false);
   protected apiResult = signal<ApodResponse | null>(null);
   protected error = signal<string | null>(null);
 
+  ngOnInit() {
+    this.fetchNasaData();
+  }
+
   fetchNasaData() {
     this.loading.set(true);
     this.error.set(null);
     this.apiResult.set(null);
 
-    console.log('Iniciando fetch a la API de la NASA...');
+    console.log('Iniciando fetch a la API de la NASA automáticamente...');
 
     this.nasaService.getApod().subscribe({
       next: (data) => {

@@ -118,37 +118,19 @@
   margin-bottom: 30px;
 }
 
-/* ACTION BUTTON */
-.action-box {
-  margin-bottom: 30px;
-}
-
-.fetch-btn {
-  background: linear-gradient(135deg, #8a2be2 0%, #4a00e0 100%);
-  border: none;
-  color: #ffffff;
-  padding: 12px 30px;
-  border-radius: 12px;
-  cursor: pointer;
+/* LOADING STATE */
+.loading-state {
+  margin: 20px 0;
+  color: #a29bfe;
+  font-size: 1.1rem;
   font-weight: 600;
-  font-size: 1rem;
-  font-family: inherit;
-  box-shadow: 0 4px 20px rgba(138, 43, 226, 0.4);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: pulse 1.5s infinite;
 }
 
-.fetch-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(138, 43, 226, 0.6);
-}
-
-.fetch-btn:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
-.fetch-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+@keyframes pulse {
+  0% { transform: scale(0.98); opacity: 0.7; }
+  50% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(0.98); opacity: 0.7; }
 }
 
 /* RESULT CARD */

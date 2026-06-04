@@ -16,11 +16,11 @@
         configurada con integración directa a la API de la NASA.
       </p>
 
-      <div class="action-box">
-        <button class="fetch-btn" (click)="fetchNasaData()" [disabled]="loading()">
-          {{ loading() ? 'Conectando con NASA...' : 'Probar conexión (Fetch APOD)' }}
-        </button>
-      </div>
+      @if (loading()) {
+        <div class="loading-state">
+          <p>⏳ Conectando con la API de la NASA...</p>
+        </div>
+      }
 
       @if (apiResult()) {
         <div class="result-card">
