@@ -1,44 +1,48 @@
-<div class="space-background">
-  <div class="stars"></div>
-  <div class="stars2"></div>
-</div>
+<div class="space-background"></div>
 
 <div class="app-container">
   <header class="dashboard-header">
-    <h1>NASA Space Observer 🚀</h1>
+    <h1>NASA Space Observer</h1>
   </header>
 
   <main class="simple-content">
     <div class="greeting-card">
-      <h2>¡Hola! Bienvenido a la base inicial</h2>
+      <h2>Bienvenido a la base inicial</h2>
       <p class="intro-text">
-        Esta es la versión inicial ("Hello World") de la aplicación Angular, 
-        configurada con integración directa a la API de la NASA.
+        Aplicación base Angular integrada con la interfaz de datos de la NASA.
       </p>
 
       @if (loading()) {
         <div class="loading-state">
-          <p>⏳ Conectando con la API de la NASA...</p>
+          <span class="spinner"></span>
+          <p>Conectando con la API de la NASA...</p>
         </div>
       }
 
       @if (apiResult()) {
         <div class="result-card">
-          <h3>Connection Telemetry: 🟢 SUCCESS</h3>
-          <p><strong>Objeto:</strong> {{ apiResult()?.title }}</p>
-          <p><strong>Fecha:</strong> {{ apiResult()?.date }}</p>
+          <div class="result-header">
+            <h3>Estado de Conexión: Online</h3>
+            <span class="status-dot"></span>
+          </div>
+          
+          <div class="result-details">
+            <p><span class="label">Objeto:</span> {{ apiResult()?.title }}</p>
+            <p><span class="label">Fecha:</span> {{ apiResult()?.date }}</p>
+          </div>
+          
           @if (apiResult()?.url) {
             <div class="image-preview">
               <img [src]="apiResult()?.url" [alt]="apiResult()?.title" class="preview-img">
             </div>
           }
-          <p class="console-hint">💡 Revisa la consola del desarrollador (F12) para ver el log de datos detallado.</p>
+          <p class="console-hint">Los detalles completos del fetch se han registrado en la consola del desarrollador (F12).</p>
         </div>
       }
 
       @if (error()) {
         <div class="error-card">
-          <p>⚠️ {{ error() }}</p>
+          <p>Error: {{ error() }}</p>
         </div>
       }
     </div>
