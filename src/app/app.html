@@ -1,0 +1,223 @@
+<div class="space-background">
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
+</div>
+
+<div class="app-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="brand">
+        <span class="icon">🚀</span>
+        <div>
+          <h1>NASA Space Observer</h1>
+          <p class="subtitle">Deep Space Exploration Dashboard & Diagnostics</p>
+        </div>
+      </div>
+      <div class="connection-status">
+        <span class="status-indicator online"></span>
+        <span class="status-text">NASA API ONLINE</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-grid">
+    <!-- Section 1: APOD (Astronomy Picture of the Day) -->
+    <section class="dashboard-card apod-section">
+      <div class="card-header">
+        <h2>🌌 Astronomy Picture of the Day</h2>
+        <span class="badge">Daily Feature</span>
+      </div>
+      
+      @if (loadingApod()) {
+        <div class="loader-container">
+          <div class="space-loader"></div>
+          <p>Syncing with interplanetary network...</p>
+        </div>
+      } @else if (errorApod()) {
+        <div class="error-container">
+          <span class="error-icon">⚠️</span>
+          <p>{{ errorApod() }}</p>
+          <button class="retry-btn" (click)="fetchApod()">Retry Sync</button>
+        </div>
+      } @else if (apod()) {
+        <div class="apod-content">
+          <div class="media-container">
+            @if (apod()?.media_type === 'image') {
+              <img [src]="apod()?.url" [alt]="apod()?.title" class="apod-image" (click)="apod()?.hdurl ? openLightbox({ img_src: apod()!.hdurl!, earth_date: apod()!.date, sol: 0, camera: { name: 'APOD', full_name: 'Astronomy Picture of the Day', id: 0, rover_id: 0 }, id: 0, rover: { name: 'Space Telescope', landing_date: '', launch_date: '', id: 0, status: 'Active' } }) : null">
+            } @else {
+              <iframe [src]="apod()?.url" class="apod-video" frameborder="0" allowfullscreen></iframe>
+            }
+          </div>
+          <div class="apod-details">
+            <div class="apod-meta">
+              <span class="date">{{ apod()?.date }}</span>
+              @if (apod()?.copyright) {
+                <span class="copyright">&copy; {{ apod()?.copyright }}</span>
+              }
+            </div>
+            <h3>{{ apod()?.title }}</h3>
+            <div class="description-scroll">
+              <p>{{ apod()?.explanation }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Section 2: Mars Rover Explorer -->
+    <section class="dashboard-card rover-section">
+      <div class="card-header">
+        <h2>🤖 Mars Rover Photo Gallery</h2>
+        <span class="badge secondary">API Search</span>
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-panel">
+        <div class="filter-group">
+          <label>Select Mars Rover</label>
+          <div class="rover-buttons">
+            @for (roverName of rovers; track roverName) {
+              <button 
+                class="rover-btn" 
+                [class.active]="selectedRover() === roverName"
+                (click)="onRoverChange(roverName)">
+                {{ roverName }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="filter-group select-group">
+          <label for="camera-select">Camera Instrument</label>
+          <select id="camera-select" class="form-control" [ngModel]="selectedCamera()" (ngModelChange)="onCameraChange($event)">
+            @for (cam of cameras; track cam.code) {
+              <option [value]="cam.code">{{ cam.name }} ({{ cam.code }})</option>
+            }
+          </select>
+        </div>
+
+        <div class="filter-group sol-group">
+          <label for="sol-input">Martian Sol (Day)</label>
+          <div class="sol-input-wrapper">
+            <input 
+              id="sol-input"
+              type="number" 
+              class="form-control" 
+              [ngModel]="sol()" 
+              (ngModelChange)="onSolChange($event)" 
+              min="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Rover Photos Grid -->
+      @if (loadingRover()) {
+        <div class="loader-container">
+          <div class="space-loader"></div>
+          <p>Requesting telemetry from Mars...</p>
+        </div>
+      } @else if (errorRover()) {
+        <div class="error-container">
+          <span class="error-icon">🛰️</span>
+          <p>{{ errorRover() }}</p>
+          <button class="retry-btn" (click)="fetchRoverPhotos()">Retry Fetch</button>
+        </div>
+      } @else {
+        <div class="photo-grid-container">
+          <div class="photo-grid">
+            @for (photo of roverPhotos(); track photo.id) {
+              <div class="photo-card" (click)="openLightbox(photo)">
+                <div class="photo-img-wrapper">
+                  <img [src]="photo.img_src" [alt]="photo.camera.full_name" loading="lazy" class="rover-img">
+                  <div class="photo-hover-overlay">
+                    <span class="view-icon">🔍 Zoom</span>
+                  </div>
+                </div>
+                <div class="photo-info">
+                  <div class="photo-meta">
+                    <span class="camera-tag">{{ photo.camera.name }}</span>
+                    <span class="sol-tag">Sol {{ photo.sol }}</span>
+                  </div>
+                  <p class="earth-date">📅 {{ photo.earth_date }}</p>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <button class="page-btn" [disabled]="pages() <= 1" (click)="changePage(-1)">
+              &larr; Prev Page
+            </button>
+            <span class="page-info">Page {{ pages() }}</span>
+            <button class="page-btn" [disabled]="roverPhotos().length < 25" (click)="changePage(1)">
+              Next Page &rarr;
+            </button>
+          </div>
+        </div>
+      }
+    </section>
+  </main>
+
+  <!-- Section 3: Diagnostic Telemetry Console -->
+  <footer class="telemetry-console" [class.collapsed]="!showConsole()">
+    <div class="console-header" (click)="toggleConsole()">
+      <div class="console-title">
+        <span class="terminal-icon">&gt;_</span>
+        <h3>Interplanetary HTTP Telemetry Console</h3>
+        <span class="log-count">({{ diagnosticsService.logs().length }} logs cached)</span>
+      </div>
+      <div class="console-actions">
+        <button class="console-toggle-btn">
+          {{ showConsole() ? 'Minimize ▽' : 'Maximize △' }}
+        </button>
+      </div>
+    </div>
+    
+    @if (showConsole()) {
+      <div class="console-body">
+        <div class="console-log-header">
+          <span class="col-time">TIMESTAMP</span>
+          <span class="col-method">METHOD</span>
+          <span class="col-status">STATUS</span>
+          <span class="col-latency">LATENCY</span>
+          <span class="col-url">REQUEST ENDPOINT</span>
+        </div>
+        <div class="console-logs">
+          @for (log of diagnosticsService.logs(); track log.timestamp + log.url) {
+            <div class="console-row" [class.status-err]="log.status !== 200">
+              <span class="col-time">[{{ log.timestamp }}]</span>
+              <span class="col-method-val">{{ log.method }}</span>
+              <span class="col-status-val" [class.success]="log.status === 200" [class.failed]="log.status !== 200">
+                {{ log.status }} {{ log.statusText }}
+              </span>
+              <span class="col-latency-val">{{ log.timeMs }}ms</span>
+              <span class="col-url-val">{{ log.url }}</span>
+            </div>
+          } @empty {
+            <div class="console-empty">
+              No HTTP traffic detected yet. Trigger an API request to see real-time telemetry.
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </footer>
+
+  <!-- Fullscreen Lightbox Overlay -->
+  @if (activeLightboxPhoto(); as photo) {
+    <div class="lightbox-overlay" (click)="closeLightbox()">
+      <button class="lightbox-close" (click)="closeLightbox()">&times;</button>
+      <div class="lightbox-content" (click)="$event.stopPropagation()">
+        <img [src]="photo.img_src" [alt]="photo.camera.full_name" class="lightbox-img">
+        <div class="lightbox-caption">
+          <h3>Rover: {{ photo.rover.name }}</h3>
+          <p><strong>Camera:</strong> {{ photo.camera.full_name }} ({{ photo.camera.name }})</p>
+          <p><strong>Martian Sol:</strong> {{ photo.sol }} | <strong>Earth Date:</strong> {{ photo.earth_date }}</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>
