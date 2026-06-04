@@ -1,0 +1,38 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Favoritos Guardados</h1>
+    <p class="page-subtitle">Colección de registros de telemetría y fotografías archivadas localmente.</p>
+  </div>
+
+  @if (favorites().length === 0) {
+    <div class="empty-panel">
+      <div class="empty-icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="empty-icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.15-.358.536-.598.92-.598s.77.24.92.598l1.624 3.79 4.103.486c.394.047.697.35.744.745c.047.394-.21.772-.51.986l-3.08 2.193l.89 4.01c.08.362-.08.742-.396.963a.885.885 0 01-1.026.015L12 18.23l-3.483 2.06c-.328.194-.75.148-1.026-.015a.885.885 0 01-.396-.963l.89-4.01l-3.08-2.193a.885.885 0 01-.51-.986a.885.885 0 01.744-.745l4.103-.486l1.624-3.79z" />
+        </svg>
+      </div>
+      <h3>Sin Archivos</h3>
+      <p>No has guardado ningún registro en tus favoritos aún. Haz clic en "Guardar" en las fichas técnicas para archivar imágenes.</p>
+    </div>
+  } @else {
+    <div class="grid-layout">
+      @for (item of favorites(); track item.id) {
+        <div class="favorite-item-wrapper">
+          <app-card
+            [id]="item.id"
+            [imageUrl]="item.imageUrl"
+            [title]="item.title"
+            [subtitle]="item.subtitle"
+            [description]="item.description"
+            [badgeText]="item.badgeText"
+          ></app-card>
+          <button (click)="removeFavorite(item.id)" class="btn-remove" title="Eliminar de favoritos">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="remove-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,27 @@
+<div class="card-container">
+  @if (imageUrl()) {
+    <div class="card-image-wrapper">
+      <img [src]="imageUrl()" [alt]="title()" loading="lazy" class="card-image" />
+      @if (badgeText()) {
+        <span class="card-badge">{{ badgeText() }}</span>
+      }
+    </div>
+  }
+  <div class="card-content">
+    @if (subtitle()) {
+      <span class="card-subtitle">{{ subtitle() }}</span>
+    }
+    <h3 class="card-title">{{ title() }}</h3>
+    @if (description()) {
+      <p class="card-description">{{ description() }}</p>
+    }
+    <div class="card-footer">
+      <a [routerLink]="['/details', id()]" class="card-link">
+        <span>Ver Detalles</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="arrow-icon">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>

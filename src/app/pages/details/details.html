@@ -1,0 +1,122 @@
+<div class="page-container">
+  <div class="details-nav">
+    <a routerLink="/home" class="btn-back">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="back-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+      </svg>
+      <span>Volver a Observación</span>
+    </a>
+  </div>
+
+  <div class="details-layout">
+    <!-- Visual Preview Card -->
+    <div class="preview-panel">
+      <div class="preview-box">
+        <div class="technical-grid"></div>
+        <span class="preview-tag">CANAL DE IMAGEN ACTIVO</span>
+        <div class="preview-content">
+          <div class="telemetry-hud">
+            <span class="hud-item">SYS: OK</span>
+            <span class="hud-item">ID: {{ telemetry().id }}</span>
+          </div>
+          <div class="radar-lens">
+            <div class="lens-ring outer"></div>
+            <div class="lens-ring middle"></div>
+            <div class="lens-ring inner"></div>
+            <div class="lens-crosshair"></div>
+          </div>
+          <span class="hud-footer">NASA SPACE OBSERVER INSTRUMENTATION</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadata Telemetry Panel -->
+    <div class="metadata-panel">
+      <div class="panel-header">
+        <span class="panel-category">{{ isRover() ? 'MARS SCIENCE LABORATORY' : 'DEEP SPACE OBSERVATORY' }}</span>
+        <h2 class="panel-title">{{ telemetry().instrument }}</h2>
+      </div>
+
+      <div class="telemetry-table">
+        <div class="table-row">
+          <span class="table-key">Identificador</span>
+          <span class="table-val mono">{{ id() }}</span>
+        </div>
+        
+        @if (isRover()) {
+          <div class="table-row">
+            <span class="table-key">Vehículo (Rover)</span>
+            <span class="table-val">{{ telemetry().rover }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Fecha Solar (Sol)</span>
+            <span class="table-val mono">{{ telemetry().sol }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Fecha Terrestre</span>
+            <span class="table-val">{{ telemetry().earthDate }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Coordenadas</span>
+            <span class="table-val mono">{{ telemetry().coords }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Temperatura Sensor</span>
+            <span class="table-val mono status-ok">{{ telemetry().sensorTemp }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Filtro Óptico</span>
+            <span class="table-val">{{ telemetry().filter }}</span>
+          </div>
+        } @else {
+          <div class="table-row">
+            <span class="table-key">Proveedor</span>
+            <span class="table-val">{{ telemetry().provider }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Fecha Captura</span>
+            <span class="table-val mono">{{ telemetry().date }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Banda Espectral</span>
+            <span class="table-val">{{ telemetry().spectralBand }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Resolución Sensor</span>
+            <span class="table-val mono">{{ telemetry().resolution }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Ubicación Instrumento</span>
+            <span class="table-val">{{ telemetry().location }}</span>
+          </div>
+          <div class="table-row">
+            <span class="table-key">Procesamiento</span>
+            <span class="table-val mono">{{ telemetry().processing }}</span>
+          </div>
+        }
+
+        <div class="table-row">
+          <span class="table-key">Tiempo de Exposición</span>
+          <span class="table-val mono">{{ telemetry().exposure }}</span>
+        </div>
+        <div class="table-row">
+          <span class="table-key">Tamaño del Archivo</span>
+          <span class="table-val mono">{{ telemetry().fileSize }}</span>
+        </div>
+        <div class="table-row">
+          <span class="table-key">Licencia / Copyright</span>
+          <span class="table-val secondary">{{ telemetry().copyright }}</span>
+        </div>
+      </div>
+
+      <div class="panel-actions">
+        <button class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="action-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.15-.358.536-.598.92-.598s.77.24.92.598l1.624 3.79 4.103.486c.394.047.697.35.744.745c.047.394-.21.772-.51.986l-3.08 2.193l.89 4.01c.08.362-.08.742-.396.963a.885.885 0 01-1.026.015L12 18.23l-3.483 2.06c-.328.194-.75.148-1.026-.015a.885.885 0 01-.396-.963l.89-4.01l-3.08-2.193a.885.885 0 01-.51-.986a.885.885 0 01.744-.745l4.103-.486l1.624-3.79z" />
+          </svg>
+          <span>Archivar en Favoritos</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

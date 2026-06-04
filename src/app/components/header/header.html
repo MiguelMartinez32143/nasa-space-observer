@@ -1,0 +1,22 @@
+<header class="header">
+  <div class="header-left">
+    <button (click)="uiService.toggleSidebar()" class="btn-toggle" aria-label="Alternar barra lateral">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="toggle-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+      </svg>
+    </button>
+    <div class="breadcrumbs">
+      <span class="breadcrumb-item text-muted">NASA Telemetry</span>
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-item active">Estación Principal</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <button (click)="uiService.toggleDiagnostics()" class="diagnostics-trigger" [class.panel-open]="uiService.diagnosticsOpen()">
+      <span class="status-indicator" [class.error]="hasError()" [class.active]="logCount() > 0"></span>
+      <span class="status-label">API Logs</span>
+      <span class="status-count">{{ logCount() }}</span>
+    </button>
+  </div>
+</header>

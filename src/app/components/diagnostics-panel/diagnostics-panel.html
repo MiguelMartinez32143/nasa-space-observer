@@ -1,0 +1,51 @@
+<div class="diagnostics-overlay" [class.open]="uiService.diagnosticsOpen()" (click)="uiService.closeDiagnostics()"></div>
+
+<aside class="diagnostics-drawer" [class.open]="uiService.diagnosticsOpen()">
+  <div class="drawer-header">
+    <div>
+      <h3 class="drawer-title">Consola de Red</h3>
+      <p class="drawer-subtitle">Telemetría de peticiones HTTP en tiempo real.</p>
+    </div>
+    <button (click)="uiService.closeDiagnostics()" class="btn-close" aria-label="Cerrar panel">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="close-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="drawer-content">
+    @if (diagnosticsService.logs().length === 0) {
+      <div class="console-empty">
+        <div class="pulse-indicator"></div>
+        <p class="empty-text">Esperando telemetría de red...</p>
+        <p class="empty-hint">Navega por la aplicación para registrar llamadas a la API de la NASA.</p>
+      </div>
+    } @else {
+      <div class="log-list">
+        @for (log of diagnosticsService.logs(); track $index) {
+          <div class="log-item" [class.log-error]="log.status >= 400">
+            <div class="log-meta">
+              <span class="log-time">{{ log.timestamp }}</span>
+              <span class="log-latency">{{ log.timeMs }}ms</span>
+            </div>
+            <div class="log-request">
+              <span class="log-method">{{ log.method }}</span>
+              <span class="log-url">{{ log.url }}</span>
+            </div>
+            <div class="log-response">
+              <span class="log-status" [class.success]="log.status < 400" [class.danger]="log.status >= 400">
+                {{ log.status }}
+              </span>
+              <span class="log-status-text">{{ log.statusText }}</span>
+            </div>
+            @if (log.message && log.status >= 400) {
+              <div class="log-error-msg">
+                {{ log.message }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</aside>

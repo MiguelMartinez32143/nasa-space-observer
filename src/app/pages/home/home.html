@@ -1,0 +1,89 @@
+<div class="page-container">
+  <div class="home-header">
+    <h1 class="home-title">Centro de Observación</h1>
+    <p class="home-subtitle">Mapeo de telemetría y registros de la API de la NASA en tiempo real.</p>
+  </div>
+
+  <!-- APOD Featured Hero -->
+  <section class="section-featured">
+    <h2 class="section-title">Foto del Día (APOD)</h2>
+    
+    @if (loadingApod()) {
+      <div class="hero-skeleton">
+        <div class="skeleton-media"></div>
+        <div class="skeleton-text-block">
+          <div class="skeleton-line title"></div>
+          <div class="skeleton-line body"></div>
+          <div class="skeleton-line body"></div>
+        </div>
+      </div>
+    } @else if (errorApod()) {
+      <div class="error-panel">
+        <p>{{ errorApod() }}</p>
+      </div>
+    } @else if (apod()) {
+      <div class="featured-hero">
+        <div class="hero-media-wrapper">
+          <img [src]="apod()?.url" [alt]="apod()?.title" class="hero-media" />
+        </div>
+        <div class="hero-info">
+          <span class="hero-meta">{{ apod()?.date }} • APOD</span>
+          <h3 class="hero-name">{{ apod()?.title }}</h3>
+          <p class="hero-explanation">{{ apod()?.explanation }}</p>
+          <div class="hero-footer">
+            <a [routerLink]="['/details', 'apod-' + apod()?.date]" class="btn btn-secondary">Ver Ficha Técnica</a>
+          </div>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- Mars Rover Gallery -->
+  <section class="section-gallery">
+    <div class="gallery-header">
+      <div>
+        <h2 class="section-title">Galería del Rover Curiosity</h2>
+        <p class="gallery-desc">Instrumentación fotográfica en Marte. Sol 1000.</p>
+      </div>
+      <div class="gallery-badge">
+        <span>Curiosity • Active</span>
+      </div>
+    </div>
+
+    @if (loadingPhotos()) {
+      <div class="grid-layout">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-card-content">
+              <div class="skeleton-line subtitle"></div>
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line body"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (errorPhotos()) {
+      <div class="error-panel">
+        <p>{{ errorPhotos() }}</p>
+      </div>
+    } @else if (roverPhotos().length === 0) {
+      <div class="empty-panel">
+        <p>No se encontraron imágenes en esta fecha solar.</p>
+      </div>
+    } @else {
+      <div class="grid-layout">
+        @for (photo of roverPhotos(); track photo.id) {
+          <app-card
+            [id]="'rover-' + photo.id.toString()"
+            [imageUrl]="photo.img_src"
+            [title]="photo.camera.full_name"
+            [subtitle]="photo.rover.name + ' • Sol ' + photo.sol"
+            [description]="'Capturada en la fecha terrestre ' + photo.earth_date + ' utilizando la cámara ' + photo.camera.name + '.'"
+            [badgeText]="photo.camera.name"
+          ></app-card>
+        }
+      </div>
+    }
+  </section>
+</div>

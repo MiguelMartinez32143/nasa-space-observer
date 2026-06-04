@@ -1,40 +1,13 @@
-<div class="app-container">
-  <header class="dashboard-header">
-    <h1>NASA Space Observer</h1>
-  </header>
+<div class="app-layout" [class.sidebar-collapsed]="!uiService.sidebarOpen()">
+  <app-sidebar></app-sidebar>
+  
+  <div class="main-container">
+    <app-header></app-header>
+    
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 
-  <main class="simple-content">
-    <div class="greeting-card">
-      <h2>Bienvenido a la base inicial</h2>
-      <p class="intro-text">
-        Aplicación Angular integrada con la API de la NASA.
-      </p>
-
-      @if (loading()) {
-        <div class="loading-state">
-          <span class="spinner"></span>
-          <p>Conectando con la API de la NASA...</p>
-        </div>
-      }
-
-      @if (apiResult()) {
-        <div class="result-card">
-          <div class="result-header">
-            <h3>Conexión exitosa</h3>
-            <span class="status-dot"></span>
-          </div>
-          <div class="result-details">
-            <p><span class="label">Título:</span> {{ apiResult()?.title }}</p>
-            <p><span class="label">Fecha:</span> {{ apiResult()?.date }}</p>
-          </div>
-        </div>
-      }
-
-      @if (error()) {
-        <div class="error-card">
-          <p>{{ error() }}</p>
-        </div>
-      }
-    </div>
-  </main>
+  <app-diagnostics-panel></app-diagnostics-panel>
 </div>

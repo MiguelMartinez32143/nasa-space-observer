@@ -1,0 +1,50 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Buscador Científico</h1>
+    <p class="page-subtitle">Explora registros del Rover y de APOD mediante palabras clave o cámaras.</p>
+  </div>
+
+  <form (submit)="onSearch($event)" class="search-form">
+    <div class="search-input-wrapper">
+      <input 
+        type="text" 
+        [ngModel]="query()" 
+        (ngModelChange)="query.set($event)"
+        name="searchQuery"
+        placeholder="Ej. Curiosity Sol 1000..." 
+        class="search-input" 
+        autocomplete="off"
+      />
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </div>
+  </form>
+
+  @if (history().length > 0) {
+    <div class="search-history">
+      <div class="history-header">
+        <span class="history-title">Búsquedas Recientes</span>
+        <button (click)="clearHistory()" class="btn-text">Borrar Historial</button>
+      </div>
+      <div class="history-list">
+        @for (item of history(); track item) {
+          <button (click)="useHistory(item)" class="history-chip">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="chip-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{{ item }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="placeholder-results">
+    <div class="placeholder-icon-wrapper">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="placeholder-icon">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z" />
+      </svg>
+    </div>
+    <h3>Consulta en Reposo</h3>
+    <p>Ingresa telemetría o una consulta clave en la barra superior para iniciar la búsqueda en las bases de datos de la NASA.</p>
+  </div>
+</div>
