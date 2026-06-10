@@ -55,86 +55,48 @@ const MOCK_APOD: ApodResponse = {
   copyright: 'NASA, ESA, Hubble Heritage Team'
 };
 
-// Robust fallback data for Mars Rover Photos (Curiosity, Sol 1000)
-const MOCK_ROVER_PHOTOS: RoverPhotosResponse = {
-  photos: [
-    {
-      id: 10001,
-      sol: 1000,
-      camera: {
-        id: 20,
-        name: 'MAST',
-        rover_id: 5,
-        full_name: 'Mast Camera (Mastcam)'
-      },
-      img_src: 'https://images-assets.nasa.gov/image/PIA19808/PIA19808~thumb.jpg',
-      earth_date: '2015-05-30',
-      rover: {
-        id: 5,
-        name: 'Curiosity',
-        landing_date: '2012-08-06',
-        launch_date: '2011-11-26',
-        status: 'active'
-      }
+// Generated high-fidelity mock data for Mars Rover Photos to support local paging and infinite scroll
+const CAMERAS = [
+  { name: 'MAST', full_name: 'Mast Camera (Mastcam)' },
+  { name: 'FHAZ', full_name: 'Front Hazard Avoidance Camera' },
+  { name: 'RHAZ', full_name: 'Rear Hazard Avoidance Camera' },
+  { name: 'NAVCAM', full_name: 'Navigation Camera' },
+  { name: 'CHEMCAM', full_name: 'Chemistry and Camera Complex' },
+  { name: 'MAHLI', full_name: 'Mars Hand Lens Imager' }
+];
+
+const IMAGE_IDS = [
+  'PIA19808', 'PIA16225', 'PIA16239', 'PIA19820', 'PIA19821', 'PIA22221',
+  'PIA22222', 'PIA22223', 'PIA23221', 'PIA23222', 'PIA23223', 'PIA23224'
+];
+
+const GENERATED_ROVER_PHOTOS: RoverPhoto[] = [];
+for (let i = 0; i < 48; i++) {
+  const imgId = IMAGE_IDS[i % IMAGE_IDS.length];
+  const cam = CAMERAS[i % CAMERAS.length];
+  GENERATED_ROVER_PHOTOS.push({
+    id: 10001 + i,
+    sol: 1000,
+    camera: {
+      id: 20 + (i % CAMERAS.length),
+      name: cam.name,
+      rover_id: 5,
+      full_name: cam.full_name
     },
-    {
-      id: 10002,
-      sol: 1000,
-      camera: {
-        id: 21,
-        name: 'FHAZ',
-        rover_id: 5,
-        full_name: 'Front Hazard Avoidance Camera'
-      },
-      img_src: 'https://images-assets.nasa.gov/image/PIA16225/PIA16225~thumb.jpg',
-      earth_date: '2015-05-30',
-      rover: {
-        id: 5,
-        name: 'Curiosity',
-        landing_date: '2012-08-06',
-        launch_date: '2011-11-26',
-        status: 'active'
-      }
-    },
-    {
-      id: 10003,
-      sol: 1000,
-      camera: {
-        id: 22,
-        name: 'RHAZ',
-        rover_id: 5,
-        full_name: 'Rear Hazard Avoidance Camera'
-      },
-      img_src: 'https://images-assets.nasa.gov/image/PIA16239/PIA16239~thumb.jpg',
-      earth_date: '2015-05-30',
-      rover: {
-        id: 5,
-        name: 'Curiosity',
-        landing_date: '2012-08-06',
-        launch_date: '2011-11-26',
-        status: 'active'
-      }
-    },
-    {
-      id: 10004,
-      sol: 1000,
-      camera: {
-        id: 20,
-        name: 'MAST',
-        rover_id: 5,
-        full_name: 'Mast Camera (Mastcam)'
-      },
-      img_src: 'https://images-assets.nasa.gov/image/PIA19808/PIA19808~thumb.jpg',
-      earth_date: '2015-05-30',
-      rover: {
-        id: 5,
-        name: 'Curiosity',
-        landing_date: '2012-08-06',
-        launch_date: '2011-11-26',
-        status: 'active'
-      }
+    img_src: `https://images-assets.nasa.gov/image/${imgId}/${imgId}~thumb.jpg`,
+    earth_date: '2015-05-30',
+    rover: {
+      id: 5,
+      name: 'Curiosity',
+      landing_date: '2012-08-06',
+      launch_date: '2011-11-26',
+      status: 'active'
     }
-  ]
+  });
+}
+
+const MOCK_ROVER_PHOTOS: RoverPhotosResponse = {
+  photos: GENERATED_ROVER_PHOTOS.slice(0, 4)
 };
 
 @Injectable({
@@ -162,9 +124,38 @@ export class NasaService {
     );
   }  /**
    * Fetch Mars Rover photos for a specific rover, sol, and optional camera.
-   * Returns local MOCK_ROVER_PHOTOS directly as the NASA API is archived/deprecated.
+   * Returns locally paginated mock photos because the NASA API endpoint is archived/deprecated.
    */
   getRoverPhotos(rover: string, sol: number, camera?: string, page: number = 1): Observable<RoverPhotosResponse> {
-    return of(MOCK_ROVER_PHOTOS);
+    let filtered = GENERATED_ROVER_PHOTOS.filter(p =>
+      p.rover.name.toLowerCase() === rover.toLowerCase()
+    );
+
+    if (camera) {
+      filtered = filtered.filter(p => p.camera.name.toLowerCase() === camera.toLowerCase());
+    }
+
+    const pageSize = 12;
+    const startIndex = (page - 1) * pageSize;
+    const paginatedPhotos = filtered.slice(startIndex, startIndex + pageSize);
+
+    return of({ photos: paginatedPhotos });
+  }
+
+  /**
+   * Search NASA Image and Video Library
+   */
+  searchNasaImages(query: string): Observable<any> {
+    const params = new HttpParams()
+      .set('q', query)
+      .set('media_type', 'image');
+
+    return this.http.get<any>(`https://images-api.nasa.gov/search`, { params }).pipe(
+      timeout(8000),
+      catchError((err) => {
+        console.error('NASA Image Library search error:', err);
+        return of({ collection: { items: [] } });
+      })
+    );
   }
 }

@@ -84,6 +84,23 @@
           ></app-card>
         }
       </div>
+
+      <!-- Infinite Scroll Sentinel & Loader -->
+      <div #infiniteScrollSentinel class="scroll-sentinel">
+        @if (loadingMore()) {
+          <div class="infinite-loader">
+            <div class="spinner"></div>
+            <span>Cargando más telemetría de Marte...</span>
+          </div>
+        } @else if (!hasMore() && roverPhotos().length > 0) {
+          <div class="end-of-records">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="end-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Fin de la transmisión de Curiosity para el Sol 1000. Todos los registros recuperados.</span>
+          </div>
+        }
+      </div>
     }
   </section>
 </div>
