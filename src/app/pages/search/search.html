@@ -6,15 +6,70 @@
 
   <form (submit)="onSearch($event)" class="search-form">
     <div class="search-input-wrapper">
-      <input 
-        type="text" 
-        [ngModel]="query()" 
-        (ngModelChange)="query.set($event)"
-        name="searchQuery"
-        placeholder="Ej. Curiosity Sol 1000..." 
-        class="search-input" 
-        autocomplete="off"
-      />
+      <div class="input-inner-wrapper">
+        <input 
+          type="text" 
+          [ngModel]="query()" 
+          (ngModelChange)="query.set($event)"
+          (focus)="showSuggestions.set(true)"
+          (blur)="onBlurInput()"
+          (keydown)="onKeyDown($event)"
+          name="searchQuery"
+          placeholder="Ej. Curiosity Sol 1000..." 
+          class="search-input" 
+          autocomplete="off"
+        />
+        @if (query()) {
+          <button type="button" class="btn-clear" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="clear-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        }
+
+        <!-- Panel Flotante de Sugerencias -->
+        @if (showSuggestions() && flatSuggestions().length > 0) {
+          <div class="suggestions-dropdown">
+            <!-- Búsquedas Recientes -->
+            @if (filteredSuggestions().history.length > 0) {
+              <div class="suggestions-section">
+                <div class="suggestions-section-title">Búsquedas Recientes</div>
+                @for (item of filteredSuggestions().history; track item) {
+                  <div 
+                    class="suggestion-item history-item"
+                    [class.active]="flatSuggestions().indexOf(item) === activeSuggestionIndex()"
+                    (mousedown)="selectSuggestion(item)"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="suggestion-icon">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="suggestion-text">{{ item }}</span>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Sugerencias Populares -->
+            @if (filteredSuggestions().popular.length > 0) {
+              <div class="suggestions-section">
+                <div class="suggestions-section-title">Sugerencias Populares</div>
+                @for (item of filteredSuggestions().popular; track item) {
+                  <div 
+                    class="suggestion-item popular-item"
+                    [class.active]="flatSuggestions().indexOf(item) === activeSuggestionIndex()"
+                    (mousedown)="selectSuggestion(item)"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="suggestion-icon">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z" />
+                    </svg>
+                    <span class="suggestion-text">{{ item }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
       <button type="submit" class="btn btn-primary">Buscar</button>
     </div>
   </form>

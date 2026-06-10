@@ -1,8 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardComponent } from '../../components/card/card';
 import { NasaService } from '../../services/nasa.service';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 interface SearchResultItem {
   id: string;
@@ -30,10 +32,82 @@ export class SearchComponent {
     'APOD Nebula'
   ]);
 
+  private popularSuggestions = [
+    'Curiosity Sol 1000',
+    'Mars Perseverance',
+    'Spirit Rover',
+    'Opportunity Rover',
+    'APOD Nebula',
+    'Orion Nebula',
+    'Andromeda Galaxy',
+    'Hubble Telescope',
+    'Black Hole',
+    'Apollo 11',
+    'Saturn Rings',
+    'Jupiter Great Red Spot',
+    'Earth from Space',
+    'Solar Flare'
+  ];
+
   protected results = signal<SearchResultItem[]>([]);
   protected loading = signal<boolean>(false);
   protected error = signal<string | null>(null);
   protected hasSearched = signal<boolean>(false);
+
+  protected showSuggestions = signal<boolean>(false);
+  protected activeSuggestionIndex = signal<number>(-1);
+  private lastSearchedQuery = '';
+
+  protected filteredSuggestions = computed(() => {
+    const queryVal = this.query().trim().toLowerCase();
+    
+    if (!queryVal) {
+      return {
+        history: this.history(),
+        popular: this.popularSuggestions.filter(p => !this.history().includes(p)).slice(0, 6)
+      };
+    }
+
+    const historyFiltered = this.history().filter(h => 
+      h.toLowerCase().includes(queryVal)
+    );
+
+    const popularFiltered = this.popularSuggestions.filter(p => 
+      p.toLowerCase().includes(queryVal) && !this.history().includes(p)
+    );
+
+    return {
+      history: historyFiltered,
+      popular: popularFiltered
+    };
+  });
+
+  protected flatSuggestions = computed(() => {
+    const sug = this.filteredSuggestions();
+    return [...sug.history, ...sug.popular];
+  });
+
+  constructor() {
+    toObservable(this.query)
+      .pipe(
+        debounceTime(350),
+        distinctUntilChanged(),
+        takeUntilDestroyed()
+      )
+      .subscribe(val => {
+        const cleanVal = val.trim();
+        if (cleanVal.length >= 3) {
+          if (cleanVal !== this.lastSearchedQuery) {
+            this.onSearch();
+          }
+        } else if (cleanVal.length === 0) {
+          this.results.set([]);
+          this.hasSearched.set(false);
+          this.error.set(null);
+          this.lastSearchedQuery = '';
+        }
+      });
+  }
 
   protected onSearch(event?: Event) {
     if (event) {
@@ -44,6 +118,16 @@ export class SearchComponent {
     if (!val) {
       return;
     }
+
+    // Hide suggestions dropdown on search
+    this.showSuggestions.set(false);
+    this.activeSuggestionIndex.set(-1);
+
+    // Avoid duplicate requests
+    if (this.lastSearchedQuery === val && !this.error() && this.hasSearched()) {
+      return;
+    }
+    this.lastSearchedQuery = val;
 
     // Add to history
     if (!this.history().includes(val)) {
@@ -111,13 +195,66 @@ export class SearchComponent {
     }
   }
 
-  protected useHistory(item: string) {
+  protected selectSuggestion(item: string) {
     this.query.set(item);
+    this.showSuggestions.set(false);
+    this.activeSuggestionIndex.set(-1);
     this.onSearch();
+  }
+
+  protected useHistory(item: string) {
+    this.selectSuggestion(item);
   }
 
   protected clearHistory() {
     this.history.set([]);
+  }
+
+  protected clearSearch() {
+    this.query.set('');
+    this.results.set([]);
+    this.hasSearched.set(false);
+    this.error.set(null);
+    this.lastSearchedQuery = '';
+    this.showSuggestions.set(false);
+    this.activeSuggestionIndex.set(-1);
+  }
+
+  protected onBlurInput() {
+    // Small timeout to allow click events on suggestions list to register
+    setTimeout(() => {
+      this.showSuggestions.set(false);
+      this.activeSuggestionIndex.set(-1);
+    }, 200);
+  }
+
+  protected onKeyDown(event: KeyboardEvent) {
+    const suggestions = this.flatSuggestions();
+    if (!this.showSuggestions() || suggestions.length === 0) {
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.activeSuggestionIndex.update(idx => 
+        idx < suggestions.length - 1 ? idx + 1 : 0
+      );
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.activeSuggestionIndex.update(idx => 
+        idx > 0 ? idx - 1 : suggestions.length - 1
+      );
+    } else if (event.key === 'Enter') {
+      const idx = this.activeSuggestionIndex();
+      if (idx >= 0 && idx < suggestions.length) {
+        event.preventDefault();
+        this.selectSuggestion(suggestions[idx]);
+      }
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      this.showSuggestions.set(false);
+      this.activeSuggestionIndex.set(-1);
+    }
   }
 
   private parseRoverQuery(val: string) {
@@ -150,3 +287,4 @@ export class SearchComponent {
     return { rover, sol, camera };
   }
 }
+
