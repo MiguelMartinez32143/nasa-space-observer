@@ -78,7 +78,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.roverPhotos.set(response.photos);
         this.loadingPhotos.set(false);
-        if (!response.photos || response.photos.length < 25) {
+        if (!response.photos || response.photos.length < 12) {
           this.hasMore.set(false);
         }
       },
@@ -106,7 +106,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             return [...current, ...newPhotos];
           });
           this.currentPage.set(nextPage);
-          if (response.photos.length < 25) {
+          if (response.photos.length < 12) {
             this.hasMore.set(false);
           }
         } else {
