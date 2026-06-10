@@ -167,7 +167,8 @@ export class SearchComponent {
         }
       });
     } else {
-      this.nasaService.searchNasaImages(val).subscribe({
+      const translatedVal = this.translateQuery(val);
+      this.nasaService.searchNasaImages(translatedVal).subscribe({
         next: (response) => {
           const items = response?.collection?.items || [];
           const mapped = items.map((item: any) => {
@@ -255,6 +256,62 @@ export class SearchComponent {
       this.showSuggestions.set(false);
       this.activeSuggestionIndex.set(-1);
     }
+  }
+
+  private translateQuery(val: string): string {
+    let query = val.toLowerCase().trim();
+
+    const dictionary: { [key: string]: string } = {
+      'marte': 'mars',
+      'luna': 'moon',
+      'nebulosa': 'nebula',
+      'galaxia': 'galaxy',
+      'agujero negro': 'black hole',
+      'agujeros negros': 'black holes',
+      'tierra': 'earth',
+      'sol': 'sun',
+      'cohete': 'rocket',
+      'cohetes': 'rockets',
+      'astronauta': 'astronaut',
+      'astronautas': 'astronauts',
+      'telescopio': 'telescope',
+      'telescopios': 'telescopes',
+      'estrella': 'star',
+      'estrellas': 'stars',
+      'planeta': 'planet',
+      'planetas': 'planets',
+      'via lactea': 'milky way',
+      'vía láctea': 'milky way',
+      'universo': 'universe',
+      'sistema solar': 'solar system',
+      'saturno': 'saturn',
+      'jupiter': 'jupiter',
+      'júpiter': 'jupiter',
+      'neptuno': 'neptune',
+      'urano': 'uranus',
+      'mercurio': 'mercury',
+      'venus': 'venus',
+      'pluton': 'pluto',
+      'plutón': 'pluto',
+      'cometa': 'comet',
+      'cometas': 'comets',
+      'asteroide': 'asteroid',
+      'asteroides': 'asteroids',
+      'eclipse': 'eclipse',
+      'aurora': 'aurora',
+      'espacio': 'space',
+      'transbordador': 'shuttle',
+      'estacion espacial': 'space station',
+      'estación espacial': 'space station'
+    };
+
+    for (const [key, translation] of Object.entries(dictionary)) {
+      const escapedKey = key.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const regex = new RegExp(`\\b${escapedKey}\\b`, 'gi');
+      query = query.replace(regex, translation);
+    }
+
+    return query;
   }
 
   private parseRoverQuery(val: string) {
