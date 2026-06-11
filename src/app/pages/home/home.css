@@ -199,6 +199,8 @@
 }
 
 .hero-skeleton {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -215,6 +217,8 @@
 
 .skeleton-text-block {
   padding: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
 .skeleton-card {
@@ -252,18 +256,18 @@
 }
 
 @media (min-width: 1024px) {
-  .featured-hero {
+  .featured-hero, .hero-skeleton {
     flex-direction: row;
     height: 380px;
   }
   
-  .hero-media-wrapper {
+  .hero-media-wrapper, .skeleton-media {
     width: 50%;
     height: 100%;
     aspect-ratio: auto;
   }
   
-  .hero-info {
+  .hero-info, .skeleton-text-block {
     width: 50%;
     padding: 32px;
     justify-content: center;
