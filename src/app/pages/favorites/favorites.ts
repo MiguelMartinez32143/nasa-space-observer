@@ -1,15 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../../components/card/card';
-
-interface FavoriteItem {
-  id: string;
-  imageUrl: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  badgeText: string;
-}
+import { FavoritesService } from '../../services/favorites.service';
+import { UiService } from '../../services/ui.service';
 
 @Component({
   selector: 'app-favorites',
@@ -19,18 +12,13 @@ interface FavoriteItem {
   styleUrl: './favorites.css'
 })
 export class FavoritesComponent {
-  protected favorites = signal<FavoriteItem[]>([
-    {
-      id: 'rover-10001',
-      imageUrl: 'https://images-assets.nasa.gov/image/PIA19808/PIA19808~thumb.jpg',
-      title: 'Mast Camera (Mastcam) Panoramic',
-      subtitle: 'Curiosity • Sol 1000',
-      description: 'Vista panorámica de las laderas del Monte Sharp capturada por la cámara Mastcam.',
-      badgeText: 'MAST'
-    }
-  ]);
+  private favoritesService = inject(FavoritesService);
+  private uiService = inject(UiService);
+
+  protected favorites = this.favoritesService.getFavorites();
 
   protected removeFavorite(id: string) {
-    this.favorites.update(favs => favs.filter(f => f.id !== id));
+    this.favoritesService.removeFavorite(id);
+    this.uiService.showToast('Eliminado de Favoritos', 'info');
   }
 }

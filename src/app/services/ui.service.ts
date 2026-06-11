@@ -22,4 +22,23 @@ export class UiService {
   closeDiagnostics() {
     this.diagnosticsOpen.set(false);
   }
+
+  toastMessage = signal<string>('');
+  toastVisible = signal<boolean>(false);
+  toastType = signal<'success' | 'info' | 'error'>('success');
+  private toastTimeout: any;
+
+  showToast(message: string, type: 'success' | 'info' | 'error' = 'success') {
+    this.toastMessage.set(message);
+    this.toastType.set(type);
+    this.toastVisible.set(true);
+
+    if (this.toastTimeout) {
+      clearTimeout(this.toastTimeout);
+    }
+
+    this.toastTimeout = setTimeout(() => {
+      this.toastVisible.set(false);
+    }, 3000);
+  }
 }

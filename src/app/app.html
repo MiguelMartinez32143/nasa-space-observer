@@ -11,3 +11,25 @@
 
   <app-diagnostics-panel></app-diagnostics-panel>
 </div>
+
+<!-- Global Sci-Fi Toast Alert Notification -->
+@if (uiService.toastVisible()) {
+  <div class="hud-toast toast-{{ uiService.toastType() }}">
+    <div class="toast-indicator"></div>
+    <div class="toast-body">
+      <span class="toast-glow"></span>
+      <div class="toast-content">
+        @if (uiService.toastType() === 'success') {
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="toast-icon text-success">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="toast-icon text-warning">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2.25m9-2.25a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 7.5h.008v.008H12v-.008Z" />
+          </svg>
+        }
+        <span class="toast-text">{{ uiService.toastMessage() }}</span>
+      </div>
+    </div>
+  </div>
+}

@@ -14,19 +14,37 @@
       <div class="preview-box">
         <div class="technical-grid"></div>
         <span class="preview-tag">CANAL DE IMAGEN ACTIVO</span>
-        <div class="preview-content">
-          <div class="telemetry-hud">
-            <span class="hud-item">SYS: OK</span>
-            <span class="hud-item">ID: {{ telemetry().id }}</span>
+
+        @if (isLoading()) {
+          <div class="preview-loader">
+            <div class="spinner"></div>
+            <span class="loader-text">SINCRONIZANDO TELEMETRÍA DE LA NASA...</span>
           </div>
-          <div class="radar-lens">
-            <div class="lens-ring outer"></div>
-            <div class="lens-ring middle"></div>
-            <div class="lens-ring inner"></div>
-            <div class="lens-crosshair"></div>
+        } @else if (hasError()) {
+          <div class="preview-error">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="error-icon">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+            <span class="error-text">ERROR: TRANSMISIÓN ROTA</span>
           </div>
-          <span class="hud-footer">NASA SPACE OBSERVER INSTRUMENTATION</span>
-        </div>
+        } @else {
+          <!-- Loaded Image with sci-fi scanning overlay styling -->
+          <img [src]="imageUrl()" [alt]="title()" class="preview-image" />
+          
+          <div class="preview-content">
+            <div class="telemetry-hud">
+              <span class="hud-item">SYS: ACTIVE</span>
+              <span class="hud-item">ID: {{ telemetry().id }}</span>
+            </div>
+            <div class="radar-lens">
+              <div class="lens-ring outer animate-spin-slow"></div>
+              <div class="lens-ring middle"></div>
+              <div class="lens-ring inner"></div>
+              <div class="lens-crosshair"></div>
+            </div>
+            <span class="hud-footer">NASA SPACE OBSERVER INSTRUMENTATION</span>
+          </div>
+        }
       </div>
     </div>
 
@@ -110,11 +128,11 @@
       </div>
 
       <div class="panel-actions">
-        <button class="btn btn-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="action-icon">
+        <button class="btn btn-primary" [class.favorited]="isFavorited()" (click)="toggleFavorite()">
+          <svg xmlns="http://www.w3.org/2000/svg" [attr.fill]="isFavorited() ? 'currentColor' : 'none'" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="action-icon">
             <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c.15-.358.536-.598.92-.598s.77.24.92.598l1.624 3.79 4.103.486c.394.047.697.35.744.745c.047.394-.21.772-.51.986l-3.08 2.193l.89 4.01c.08.362-.08.742-.396.963a.885.885 0 01-1.026.015L12 18.23l-3.483 2.06c-.328.194-.75.148-1.026-.015a.885.885 0 01-.396-.963l.89-4.01l-3.08-2.193a.885.885 0 01-.51-.986a.885.885 0 01.744-.745l4.103-.486l1.624-3.79z" />
           </svg>
-          <span>Archivar en Favoritos</span>
+          <span>{{ isFavorited() ? 'Quitar de Favoritos' : 'Archivar en Favoritos' }}</span>
         </button>
       </div>
     </div>

@@ -39,3 +39,102 @@
     width: 100%;
   }
 }
+
+/* HUD-style Sci-Fi Toast Notification */
+.hud-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: stretch;
+  background: rgba(9, 10, 13, 0.85);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  min-width: 300px;
+  max-width: 450px;
+  animation: toast-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.toast-indicator {
+  width: 4px;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.toast-success .toast-indicator {
+  background: var(--success, #10b981);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.toast-info .toast-indicator {
+  background: var(--primary, #3b82f6);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.toast-error .toast-indicator {
+  background: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.toast-body {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 14px 18px;
+  flex-grow: 1;
+}
+
+.toast-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at left, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1;
+}
+
+.toast-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.toast-icon.text-success {
+  color: var(--success, #10b981);
+}
+
+.toast-icon.text-warning {
+  color: #f59e0b;
+}
+
+.toast-text {
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  letter-spacing: 0.01em;
+}

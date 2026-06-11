@@ -267,4 +267,26 @@ export class NasaService {
       })
     );
   }
+
+  /**
+   * Fetch a single Mars Rover photo by its numeric ID
+   */
+  getRoverPhotoById(id: number): Observable<RoverPhoto | undefined> {
+    const photo = GENERATED_ROVER_PHOTOS.find(p => p.id === id);
+    return of(photo);
+  }
+
+  /**
+   * Fetch a single NASA Image search record by its NASA ID
+   */
+  getNasaImageById(nasaId: string): Observable<any> {
+    const params = new HttpParams().set('nasa_id', nasaId);
+    return this.http.get<any>(`https://images-api.nasa.gov/search`, { params }).pipe(
+      timeout(8000),
+      catchError((err) => {
+        console.error('NASA Image get by ID error:', err);
+        return of({ collection: { items: [] } });
+      })
+    );
+  }
 }
